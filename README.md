@@ -119,11 +119,11 @@ molecule2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
 map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
 
 # For mapping = False
-fingerprints = map4.encode([molecule1, molecule2], max_radius=2, mapping=False)
+fingerprints = map4.encode_many([molecule1, molecule2], max_radius=2, mapping=False)
 print(fingerprints)
 
 # For mapping = True
-fingerprints, hash_map = map4.encode([molecule1, molecule2], max_radius=2, mapping=True)
+fingerprints, hash_map = map4.encode_many([molecule1, molecule2], max_radius=2, mapping=True)
 print(fingerprints)
 print(hash_map) # You will obtain a single dictionary, which contains all the hashes and their respective shingles of origin for all calulated fingerprints
 
