@@ -77,7 +77,7 @@ conda activate my_environment
 ```
 
 ```console
-pip install mxfp
+pip install mapchiral
 ```
 
 ## Using MAP*
@@ -91,16 +91,14 @@ from mapchiral.mapchiral import MAPCalculator
 molecule = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
 
 #Initialize the MAPCalculator class
-map4 = MAPCalculator(radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
+map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
 
 # For mapping = False
-mapping = False
-fingerprint = map4.encode(mol, mapping)
+fingerprint = map4.encode(mol, max_radius=2, mapping=False) # If max_radius and mapping are not specified, the values from the initialization are used.
 print(fingerprint)
 
 # For mapping = True
-mapping = True
-fingerprint, hash_map = map4.encode(mol, mapping)
+fingerprint, hash_map = map4.encode(mol, max_radius=2, mapping=True)
 print(fingerprint)
 print(hash_map)
 
@@ -118,16 +116,14 @@ molecule1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
 molecule2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
 
 #Initialize the MAPCalculator class
-map4 = MAPCalculator(radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
+map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
 
 # For mapping = False
-mapping = False
-fingerprints = map4.encode([molecule1, molecule2], mapping)
+fingerprints = map4.encode([molecule1, molecule2], max_radius=2, mapping=False)
 print(fingerprints)
 
 # For mapping = True
-mapping = True
-fingerprints, hash_map = map4.encode([molecule1, molecule2], mapping)
+fingerprints, hash_map = map4.encode([molecule1, molecule2], max_radius=2, mapping=True)
 print(fingerprints)
 print(hash_map) # You will obtain a single dictionary, which contains all the hashes and their respective shingles of origin for all calulated fingerprints
 
