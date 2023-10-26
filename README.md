@@ -94,11 +94,11 @@ molecule = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
 map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
 
 # For mapping = False
-fingerprint = map4.encode(mol, max_radius=2, mapping=False) # If max_radius and mapping are not specified, the values from the initialization are used.
+fingerprint = map4.encode(molecule, max_radius=2, mapping=False) # If max_radius and mapping are not specified, the values from the initialization are used.
 print(fingerprint)
 
 # For mapping = True
-fingerprint, hash_map = map4.encode(mol, max_radius=2, mapping=True)
+fingerprint, hash_map = map4.encode(molecule, max_radius=2, mapping=True)
 print(fingerprint)
 print(hash_map)
 
