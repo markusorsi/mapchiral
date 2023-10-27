@@ -27,11 +27,12 @@ The present code expands the functionality of MAP4 to include encoding of stereo
 
 Additional improvements to the original MAP4 code include: 
 
-* **Parallelization**: The fingerprint calculation for a list of molecules is implemented in parallel using the joblib library, which significantly reduces the calculation time for larger datasets. 
+* **Parallelization**: The fingerprint calculation for a list of molecules is implemented in parallel using the multiprocessing library, which significantly reduces the calculation time for larger datasets. 
 
 * **Feature mapping**: I included the option to map the hashes in the fingerprint to their respective shingles of origin. The idea is to enable the use of the fingerprint for explainable machine learning tasks. This function significantly increases the calculation time. It also gives different fingerprints than the non-mapped version as I had to change the minhashing function to make it work. Therefore, please be mindful when using this option and only use it when mapping is required. Also, if anyone has a better idea on how to implement this function, please let me know!
 
-If you find any bugs, have suggestions for improvement or want to contribute to the code, please open a new issue and I will get back to you as soon as possible.
+
+#### If you find any bugs, have suggestions for improvement or want to contribute to the code, please open a new issue and I will get back to you as soon as possible.
 
 ## Getting started
 
@@ -39,10 +40,9 @@ If you find any bugs, have suggestions for improvement or want to contribute to 
 
 You will need following prerequisites: 
 
-* [Python 3.10](https://www.python.org)
-* [RDKit 2022.03.5](https://www.rdkit.org)
-* [NumPy 1.26.0](https://numpy.org)
-* [Joblib 1.2.0](https://joblib.readthedocs.io/en/latest/) (for parallelization)
+* [Python](https://www.python.org)
+* [RDKit](https://www.rdkit.org)
+* [NumPy](https://numpy.org)
 
 ## Installing MAP*
 
@@ -82,51 +82,51 @@ pip install mapchiral
 
 ## Using MAP*
 
+MAP* can be used for the quantitative comparison of molecules. The similarity between two molecules can calculated as the Jaccard similarity between their fingerprints using the function provided in the mapchiral package: 
+
 ```python
-#Import the required libraries (RDKit, MXFP)
 from rdkit import Chem
-from mapchiral.mapchiral import MAPCalculator
+from mapchiral.mapchiral import encode, jaccard_similarity
 
-#Convert SMILES to rdchem.Mol object with RDKit (optional)
-molecule = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
+molecule_1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
+molecule_2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
 
-#Initialize the MAPCalculator class
-map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
+fingerprint_1 = encode(molecule_1, max_radius=2, n_permutations=2048, mapping=False)
+fingerprint_2 = encode(molecule_2, max_radius=2, n_permutations=2048, mapping=False)
 
-# For mapping = False
-fingerprint = map4.encode(molecule, max_radius=2, mapping=False) # If max_radius and mapping are not specified, the values from the initialization are used.
-print(fingerprint)
+similarity = jaccard_similarity(fingerprint_1, fingerprint_2)
 
-# For mapping = True
-fingerprint, hash_map = map4.encode(molecule, max_radius=2, mapping=True)
-print(fingerprint)
-print(hash_map)
+print(similarity)
 
 ```
 
-You can also use the MAPCalculator class to calculate the fingerprint for a list of molecules. 
+The mapchiral package also contains a function to calculate the fingerprints of a list of molecules simultaneously. This is especially useful for larger datasets as the calculation is parallelized and therefore much faster.
 
 ```python
-#Import the required libraries (RDKit, MXFP)
 from rdkit import Chem
-from mapchiral.mapchiral import MAPCalculator
+from mapchiral.mapchiral import encode_many_
 
-#Convert SMILES to rdchem.Mol object with RDKit (optional)
 molecule1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
 molecule2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
+molecules = [molecule1, molecule2]
 
-#Initialize the MAPCalculator class
-map4 = MAPCalculator(max_radius=2, n_permutations=2048, mapping=False, n_cores=8, seed=42)
+fingerprints = encode_many(molecules, max_radius=2, n_permutations=2048, mapping=False, n_cpus=4)
 
-# For mapping = False
-fingerprints = map4.encode_many([molecule1, molecule2], max_radius=2, mapping=False)
 print(fingerprints)
+```
 
-# For mapping = True
-fingerprints, hash_map = map4.encode_many([molecule1, molecule2], max_radius=2, mapping=True)
-print(fingerprints)
-print(hash_map) # You will obtain a single dictionary, which contains all the hashes and their respective shingles of origin for all calulated fingerprints
+Finally, the mapchiral package has an option (experimental) to map the hashes in the fingerprints to their original shingles. This is useful for explainable machine learning tasks. However, it significantly increases the calculation time. Mapping is also available for the "encode_many" function, where it returns a single dictionary containing all hashes present in the fingerprints and their respective shingles of origin. 
 
+```python
+from rdkit import Chem
+from mapchiral.mapchiral import encode, jaccard_similarity
+
+molecule_1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
+
+fingerprint, hash_map = encode(molecule_1, max_radius=2, n_permutations=2048, mapping=True)
+
+print(fingerprint)
+print(hash_map)
 ```
 
 ## License
