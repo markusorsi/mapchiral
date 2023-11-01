@@ -104,7 +104,7 @@ The mapchiral package also contains a function to calculate the fingerprints of 
 
 ```python
 from rdkit import Chem
-from mapchiral.mapchiral import encode_many_
+from mapchiral.mapchiral import encode_many
 
 molecule1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
 molecule2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
