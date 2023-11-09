@@ -81,7 +81,7 @@ def get_atom_env(mol, radius:int, atom:int) -> str:
     env = Chem.FindAtomEnvironmentOfRadiusN(mol, radius, atom)
     amap = {}
     mol = Chem.PathToSubmol(mol, env, atomMap=amap)
-    smiles = Chem.MolToSmiles(mol, isomericSmiles=True, canonical=True, rootedAtAtom=amap[atom]).replace('[C@H]', 'C').replace('[C@@H]', 'C') # Manual correction to preserve E/Z isomerism but remove chirality.
+    smiles = Chem.MolToSmiles(mol, isomericSmiles=True, canonical=True).replace('[C@H]', 'C').replace('[C@@H]', 'C') # Manual correction to preserve E/Z isomerism but remove chirality.
     return smiles
 
 
