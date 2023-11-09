@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.0.3' 
+VERSION = '0.0.4' 
 DESCRIPTION = 'Chiral MinHashed Atom-Pair Fingerprint  (MAP*) '
 LONG_DESCRIPTION = 'Open-source version of the MAP fingerprint, which includes stereochemistry encoding, mapping of hashes to shingles and parallelization.'
 

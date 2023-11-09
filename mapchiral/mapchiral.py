@@ -81,7 +81,7 @@ def get_atom_env(mol, radius:int, atom:int) -> str:
     env = Chem.FindAtomEnvironmentOfRadiusN(mol, radius, atom)
     amap = {}
     mol = Chem.PathToSubmol(mol, env, atomMap=amap)
-    smiles = Chem.MolToSmiles(mol, isomericSmiles=True, canonical=False, rootedAtAtom=amap[atom]).replace('[C@H]', 'C').replace('[C@@H]', 'C') # Manual correction to preserve E/Z isomerism but remove chirality.
+    smiles = Chem.MolToSmiles(mol, isomericSmiles=True, canonical=True, rootedAtAtom=amap[atom]).replace('[C@H]', 'C').replace('[C@@H]', 'C') # Manual correction to preserve E/Z isomerism but remove chirality.
     return smiles
 
 
@@ -107,7 +107,7 @@ def get_substructures(mol, max_radius:int=2) -> np.array:
     ```
     """
     rdCIPLabeler.AssignCIPLabels(mol)
-    chiral_centers = dict(Chem.FindMolChiralCenters(mol), includeUnassigned=True)
+    chiral_centers = dict(Chem.FindMolChiralCenters(mol, includeUnassigned=True))
     substructures = np.empty((mol.GetNumAtoms(), max_radius), dtype='object')
     
     for atom in range(mol.GetNumAtoms()):
