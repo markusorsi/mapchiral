@@ -9,9 +9,9 @@ The original version of the MinHashed Atom-Pair fingerprint of radius 2 (MAP4) s
 The present code expands the functionality of MAP4 to include encoding of stereochemistry into the fingerprint. Hereby, the CIP descriptors of chiral atoms are encoded into the fingerprint at the highest radius. This design choice allows to modulate the impact of stereochemistry on overall similarity, making it scale with increasing molecular size without disproportionally affecting structural similarity. The resulting fingerprint, MAP*, is calculated as follows:
 
 <p align="center">
-    <img src="readme_figures/shingle.png" alt="shingles" width="400"/>
+    <img src="shingle.png" alt="shingles" width="400"/>
     <br>
-    <em>Fingerprint and shingle design. Every shingle contains two circular substructures (blue), the topological disance between the two substructures (red) and the CIP descriptor replacing the chiral atom (green). </em>
+    <em>Fingerprint and shingle design. Every shingle contains two circular substructures (blue), the topological disance between the two substructures (red) and the CIP descriptor replacing the chiral atom (yellow). </em>
 </p>
 
 The chiral version of the MinHashed Atom-Pair fingerprint (MAPC) was implemented in Python using RDKit following these steps: 
