@@ -1,4 +1,4 @@
-# **MAP*** (Chiral MinHashed Atom-Pair Fingerprint)
+# **MAPC** (MinHashed Atom-Pair Fingerprint Chiral)
 
 <img src="https://img.shields.io/pypi/v/mapchiral?color=success&label=Version&style=flat-square"/> <img src="https://img.shields.io/badge/Python-3.10-blue?style=flat-square"/> <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square"/>
 
@@ -14,14 +14,15 @@ The present code expands the functionality of MAP4 to include encoding of stereo
     <em>Fingerprint and shingle design. Every shingle contains two circular substructures (blue), the topological disance between the two substructures (red) and the CIP descriptor replacing the chiral atom (green). </em>
 </p>
 
+The chiral version of the MinHashed Atom-Pair fingerprint (MAPC) was implemented in Python using RDKit following these steps: 
 
-1. At every non-hydrogen atom, all circular substructures up to the specified maximum radius are extracted in SMILES format. Radius 0 is skipped.
+1.	At every non-hydrogen atom, extract all circular substructures up to the specified maximum radius as isomeric, canonical SMILES. Isomeric information (“@” and “@@” characters) is manually removed from the extracted SMILES, while the implicit E/Z-isomerism (“/”, and “\” characters) are maintained. Allene chirality and conformational chirality such as in biaryls or in helicenes are not considered, as they cannot be specified in the SMILES notation. Radius 0 is skipped. 
 
-2. At the specified maximum radius, whenever the central atom of a circular substructure is chiral, the atom symbol in the extracted SMILES is replaced with its CIP descriptor bracketed by two “\$” characters (\$CIP\$). The CIP descriptor of the chiral atom is defined on the entire molecule.
+2.	At the specified maximum radius, whenever the central atom of a circular substructure is chiral, replace the first atom symbol in the extracted SMILES with its Cahn-Ingold-Prelog (CIP) descriptor bracketed by two “$” characters ($CIP$). The CIP descriptor of the chiral atom is defined on the entire molecule, not on the extracted substructure.  
 
-3. At each radius, shingles for all possible pairs of extracted substructures are generated. Each shingle contains two substructures and their topological distance in following format: **“substructure 1 | topological distance | substructure 2"**.
+3.	At each radius, generate shingles for all possible pairs of extracted substructures. Each shingle contains two substructures and their topological distance in following format: “substructure 1 | topological distance | substructure 2”.
 
-4. The list of shingles is minhashed to obtain a fixed sized vector. 
+4.	MinHash the list of shingles to obtain a fixed sized vector. The MinHashing procedure is explained in detail in our previous publication.
 
 ### Additional improvements 
 
