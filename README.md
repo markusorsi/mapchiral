@@ -45,7 +45,7 @@ You will need following prerequisites:
 * [RDKit](https://www.rdkit.org)
 * [NumPy](https://numpy.org)
 
-## Installing MAP*
+## Installing MAPC
 
 #### **Installing via GitHub**
 
@@ -81,7 +81,7 @@ conda activate my_environment
 pip install mapchiral
 ```
 
-## Using MAP*
+## Using MAPC
 
 MAP* can be used for the quantitative comparison of molecules. The similarity between two molecules can calculated as the Jaccard similarity between their fingerprints using the function provided in the mapchiral package: 
 
