@@ -425,7 +425,7 @@ def encode_many(mols, max_radius:int=2, n_permutations:int=2048, mapping:bool=Fa
     if mapping:
         return get_fingerprints_with_mapping(mols, max_radius, n_permutations, n_cpus, seed)
     else:
-        return get_fingerprints(mols, max_radius, n_cpus, n_permutations)
+        return get_fingerprints(mols, max_radius, n_permutations, n_cpus)
 
 
 def jaccard_similarity(fingerprint_1:np.array=None, fingerprint_2:np.array=None):
