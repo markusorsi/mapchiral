@@ -6,7 +6,7 @@
 
 The original version of the MinHashed Atom-Pair fingerprint of radius 2 (MAP4) successfully combined circular substructure fingerprints and atom-pair fingerprints into a unified framework. This combination allowed for improved substructure perception and performance in small molecule benchmarks while retaining information about bond distances for molecular size and shape perception.
 
-The present code expands the functionality of MAP4 to include encoding of stereochemistry into the fingerprint. Hereby, the CIP descriptors of chiral atoms are encoded into the fingerprint at the highest radius. This design choice allows to modulate the impact of stereochemistry on overall similarity, making it scale with increasing molecular size without disproportionally affecting structural similarity. The resulting fingerprint, MAP*, is calculated as follows:
+The present code expands the functionality of MAP4 to include encoding of stereochemistry into the fingerprint. Hereby, the CIP descriptors of chiral atoms are encoded into the fingerprint at the highest radius. This design choice allows to modulate the impact of stereochemistry on overall similarity, making it scale with increasing molecular size without disproportionally affecting structural similarity. The resulting fingerprint, MAPC, is calculated as follows:
 
 <p align="center">
     <img src="shingle.png" alt="shingles" width="400"/>
@@ -83,7 +83,7 @@ pip install mapchiral
 
 ## Using MAPC
 
-MAP* can be used for the quantitative comparison of molecules. The similarity between two molecules can calculated as the Jaccard similarity between their fingerprints using the function provided in the mapchiral package: 
+MAPC can be used for the quantitative comparison of molecules. The similarity between two molecules can calculated as the Jaccard similarity between their fingerprints using the function provided in the mapchiral package: 
 
 ```python
 from rdkit import Chem
@@ -99,35 +99,6 @@ similarity = jaccard_similarity(fingerprint_1, fingerprint_2)
 
 print(similarity)
 
-```
-
-The mapchiral package also contains a function to calculate the fingerprints of a list of molecules simultaneously. This is especially useful for larger datasets as the calculation is parallelized and therefore much faster.
-
-```python
-from rdkit import Chem
-from mapchiral.mapchiral import encode_many
-
-molecule1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
-molecule2 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@H]1N2C(=O)C3=CC=CC=C3C2=O')
-molecules = [molecule1, molecule2]
-
-fingerprints = encode_many(molecules, max_radius=2, n_permutations=2048, mapping=False, n_cpus=4)
-
-print(fingerprints)
-```
-
-Finally, the mapchiral package has an option (experimental) to map the hashes in the fingerprints to their original shingles. This is useful for explainable machine learning tasks. However, it significantly increases the calculation time. Mapping is also available for the "encode_many" function, where it returns a single dictionary containing all hashes present in the fingerprints and their respective shingles of origin. 
-
-```python
-from rdkit import Chem
-from mapchiral.mapchiral import encode, jaccard_similarity
-
-molecule_1 = Chem.MolFromSmiles('C1CC(=O)NC(=O)[C@@H]1N2C(=O)C3=CC=CC=C3C2=O')
-
-fingerprint, hash_map = encode(molecule_1, max_radius=2, n_permutations=2048, mapping=True)
-
-print(fingerprint)
-print(hash_map)
 ```
 
 ## License
