@@ -33,19 +33,19 @@ def get_minhash_parameters(n_permutations:int=2048, seed:int=42):
     prime = (1 << 61) - 1
     max_hash = 2**32 - 1
 
-    permutations_a = np.zeros([n_permutations], dtype=np.uint32)
-    permutations_b = np.zeros([n_permutations], dtype=np.uint32)
+    permutations_a = np.zeros([n_permutations], dtype=np.uint64)
+    permutations_b = np.zeros([n_permutations], dtype=np.uint64)
 
 
     for i in range(n_permutations):
-        a = rand.randint(1, max_hash, dtype=np.uint32)
-        b = rand.randint(0, max_hash, dtype=np.uint32)
+        a = rand.randint(1, max_hash, dtype=np.uint64)
+        b = rand.randint(0, max_hash, dtype=np.uint64)
 
         while a in permutations_a:
-            a = rand.randint(1, max_hash, dtype=np.uint32)
+            a = rand.randint(1, max_hash, dtype=np.uint64)
 
         while b in permutations_b:
-            b = rand.randint(0, max_hash, dtype=np.uint32)
+            b = rand.randint(0, max_hash, dtype=np.uint64)
 
         permutations_a[i] = a
         permutations_b[i] = b
@@ -233,7 +233,7 @@ def get_fingerprint(mol, max_radius:int=2, n_permutations:int=2048) -> np.array:
     encoder = rdMHFPFingerprint.MHFPEncoder(n_permutations)
     shingles = get_shingles(mol, max_radius)
     fingerprint = encoder.FromStringArray(shingles)
-    return np.array(fingerprint, dtype=np.uint32)
+    return np.array(fingerprint, dtype=np.uint64)
 
 
 def get_fingerprints(mols:list, max_radius:int=2, n_permutations:int=2048, n_cpus:int=4) -> list:
@@ -295,11 +295,11 @@ def get_fingerprint_with_mapping(mol, max_radius:int=2, n_permutations:int=2048,
     permutations_a, permutations_b, prime, max_hash = get_minhash_parameters(n_permutations, seed)
 
     hash_dict = get_hash_dict(mol, max_radius)
-    hash_values = np.full((n_permutations, 1), max_hash, dtype=np.uint32)
+    hash_values = np.full((n_permutations, 1), max_hash, dtype=np.uint64)
 
     hash_map_full = {}
     for hash, shingle in hash_dict.items():
-        hashes = np.remainder(np.remainder(permutations_a * hash + permutations_b, prime), max_hash).astype(np.uint32)
+        hashes = np.remainder(np.remainder(permutations_a * hash + permutations_b, prime), max_hash).astype(np.uint64)
         hash_values = np.minimum(hash_values, hashes)
         hash_intersection = np.intersect1d(hash_values, hashes)
         
