@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from rdkit import Chem
 from rdkit.Chem import rdmolops, rdCIPLabeler, rdMHFPFingerprint
 
-def get_minhash_parameters(n_permutations:int=2048, seed:int=42): 
+def get_minhash_parameters(n_permutations:int=2048, seed:int=42):
     """
     Generates random permutations and parameters to be used in the minhashing procedure.
 
@@ -85,7 +85,7 @@ def get_atom_env(mol, radius:int, atom:int) -> str:
     return smiles
 
 
-def get_substructures(mol, max_radius:int=2) -> np.array:
+def get_substructures(mol, max_radius:int=2) -> np.ndarray:
     """
     Retrieves all substructures around each atom within a specified maximum radius. Substructures where the central atom is chiral are marked according to their CIP descriptor.
 
@@ -96,7 +96,7 @@ def get_substructures(mol, max_radius:int=2) -> np.array:
 
     Returns:
     ----------
-    np.array: An array (n_atoms x max_radius) containing substructure information for each atom within the maximum radius.
+    np.ndarray: An array (n_atoms x max_radius) containing substructure information for each atom within the maximum radius.
 
     Example Usage:
     ----------
@@ -109,11 +109,11 @@ def get_substructures(mol, max_radius:int=2) -> np.array:
     rdCIPLabeler.AssignCIPLabels(mol)
     chiral_centers = dict(Chem.FindMolChiralCenters(mol, includeUnassigned=True))
     substructures = np.empty((mol.GetNumAtoms(), max_radius), dtype='object')
-    
+
     for atom in range(mol.GetNumAtoms()):
         for radius in range(1, max_radius+1):
             substructures[atom, radius-1] = get_atom_env(mol, radius, atom)
-    
+
     for idx, label in chiral_centers.items():
         substructures[idx, max_radius-1] = f'${label}$' + substructures[idx, max_radius-1][1:]
 
@@ -208,7 +208,7 @@ def combine_dicts(dict_list:list) -> dict:
     return combined_dict
 
 
-def get_fingerprint(mol, max_radius:int=2, n_permutations:int=2048) -> np.array:
+def get_fingerprint(mol, max_radius:int=2, n_permutations:int=2048) -> np.ndarray:
     """
     Generates a fingerprint by minhashing unique shingles extracted from a molecular structure.
 
@@ -302,7 +302,7 @@ def get_fingerprint_with_mapping(mol, max_radius:int=2, n_permutations:int=2048,
         hashes = np.remainder(np.remainder(permutations_a * hash + permutations_b, prime), max_hash).astype(np.uint64)
         hash_values = np.minimum(hash_values, hashes)
         hash_intersection = np.intersect1d(hash_values, hashes)
-        
+
         for h in hash_intersection:
             hash_map_full[h] = shingle # Intersection to be more memory efficient
 
@@ -313,7 +313,7 @@ def get_fingerprint_with_mapping(mol, max_radius:int=2, n_permutations:int=2048,
         hash_map[key] = hash_map_full[key]
 
     return hash_values, hash_map
-    
+
 
 def get_fingerprints_with_mapping(mols:list, max_radius:int=2, n_permutations:int=2048, n_cpus:int=4, seed:int=42) -> tuple:
     """
@@ -349,11 +349,11 @@ def get_fingerprints_with_mapping(mols:list, max_radius:int=2, n_permutations:in
     fingerprints = [item[0] for item in fingerprints_dicts]
     all_dicts = [item[1] for item in fingerprints_dicts]
     combined_dict = combine_dicts(all_dicts)
-    
+
     return fingerprints, combined_dict
 
 
-def encode(mol, max_radius:int=2, n_permutations:int=2048, mapping:bool=False, seed:int=42) -> tuple or np.array:
+def encode(mol, max_radius:int=2, n_permutations:int=2048, mapping:bool=False, seed:int=42) -> tuple or np.ndarray:
     """
     Encodes the molecular structure into a fingerprint. If mapping=True, the function returns the fingerprint and a dictionary mapping the hashes to their corresponding shingles of origin.
 
@@ -367,7 +367,7 @@ def encode(mol, max_radius:int=2, n_permutations:int=2048, mapping:bool=False, s
 
     Returns:
     ----------
-    tuple or np.array: If 'mapping' is True, returns a tuple containing an array representing the fingerprint values and a dictionary representing the mapping of those values to the corresponding shingles. If 'mapping' is False, returns an array representing the generated fingerprint.
+    tuple or np.ndarray: If 'mapping' is True, returns a tuple containing an array representing the fingerprint values and a dictionary representing the mapping of those values to the corresponding shingles. If 'mapping' is False, returns an array representing the generated fingerprint.
 
     Example Usage:
     ----------
@@ -428,15 +428,15 @@ def encode_many(mols, max_radius:int=2, n_permutations:int=2048, mapping:bool=Fa
         return get_fingerprints(mols, max_radius, n_permutations, n_cpus)
 
 
-def jaccard_similarity(fingerprint_1:np.array=None, fingerprint_2:np.array=None):
+def jaccard_similarity(fingerprint_1: np.ndarray = None, fingerprint_2: np.ndarray = None):
     """
-    Returns the jaccard distance between two minhashed fingerprints. 
+    Returns the jaccard distance between two minhashed fingerprints.
     The jaccard distance is defined as 1 - jaccard similarity.
 
     Parameters:
     ----------
-    fingerprint_1 (np.array): The first fingerprint to be compared.
-    fingerprint_2 (np.array): The second fingerprint to be compared.
+    fingerprint_1 (np.ndarray): The first fingerprint to be compared.
+    fingerprint_2 (np.ndarray): The second fingerprint to be compared.
 
     Returns:
     ----------
